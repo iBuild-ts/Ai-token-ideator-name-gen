@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Ideator - AI-Powered Crypto Token Branding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .button.secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .results {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .color-box:hover {
+            transform: scale(1.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-badge.unique {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.conflict {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .wallet-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .wallet-section h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .wallet-info {
+            background: rgba(255,255,255,0.15);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-family: monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .ideas-list {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .idea-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .idea-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .idea-card p {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .idea-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .idea-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f5c6cb;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c3e6cb;
+        }
+
+        .launchpad-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .launchpad-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            min-height: 90px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .launchpad-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .launchpad-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .launchpad-icon {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .launchpad-name {
+            font-size: 0.8em;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .launchpad-btn.pumpfun {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E72 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .launchpad-btn.pumpfun:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .launchpad-btn.bonkfun {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .launchpad-btn.bonkfun:hover {
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .launchpad-btn.raydium {
+            background: linear-gradient(135deg, #20E3B2 0%, #29FFC6 100%);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(32, 227, 178, 0.3);
+        }
+
+        .launchpad-btn.raydium:hover {
+            box-shadow: 0 6px 20px rgba(32, 227, 178, 0.5);
+        }
+
+        .launchpad-btn.orca {
+            background: linear-gradient(135deg, #3772FF 0%, #5A9FFF 100%);
+            box-shadow: 0 4px 15px rgba(55, 114, 255, 0.3);
+        }
+
+        .launchpad-btn.orca:hover {
+            box-shadow: 0 6px 20px rgba(55, 114, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .launchpad-buttons {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            }
+
+            .launchpad-btn {
+                min-height: 80px;
+                padding: 12px 8px;
+            }
+
+            .launchpad-icon {
+                font-size: 1.5em;
+                margin-bottom: 6px;
+            }
+
+            .launchpad-name {
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Token Ideator</h1>
+            <p>AI-Powered Crypto Token Branding for VCs & Founders</p>
+        </header>
+
+        <div class="wallet-section">
+            <h3>🔗 Wallet Connection</h3>
+            <div id="walletStatus">
+                <button class="button" onclick="connectWallet()">Connect Wallet</button>
+            </div>
+            <div id="walletInfo" style="display: none;">
+                <p style="color: white; margin-bottom: 10px;">Connected Wallet:</p>
+                <div class="wallet-info" id="walletAddress"></div>
+                <button class="button secondary" onclick="disconnectWallet()" style="margin-top: 15px;">Disconnect</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>💡 Submit Your Idea</h2>
+                <form id="ideaForm">
+                    <div class="form-group">
+                        <label for="projectIdea">Project Idea *</label>
+                        <textarea id="projectIdea" placeholder="Describe your crypto project idea in detail..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="founderName">Your Name/Organization</label>
+                        <input type="text" id="founderName" placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="founderEmail">Email</label>
+                        <input type="email" id="founderEmail" placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="industry">Industry/Category</label>
+                        <select id="industry">
+                            <option value="">Select category...</option>
+                            <option value="DeFi">DeFi</option>
+                            <option value="NFT">NFT</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Meme">Meme Coin</option>
+                            <option value="Utility">Utility Token</option>
+                            <option value="Governance">Governance</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="button">Generate Token Branding</button>
+                </form>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </div>
+
+            <div class="card">
+                <h2>✨ Generated Results</h2>
+                <div id="results" class="results">
+                    <div class="result-item">
+                        <strong>Token Name</strong>
+                        <div id="resultTokenName"></div>
+                    </div>
+
+                    <div class="result-item">
+                        <strong>Symbol (Ticker)</strong>
+                        <div id="resultSymbol"></div>
+                    </div>
+
+                    <div class="result-item">
+                        <strong>Tagline</strong>
+                        <div id="resultTagline"></div>
+                    </div>
+
+                    <div class="result-item">
+                        <strong>Color Palette</strong>
+                        <div class="color-palette" id="colorPalette"></div>
+                    </div>
+
+                    <div class="result-item">
+                        <strong>Uniqueness Status</strong>
+                        <div id="uniquenessStatus"></div>
+                    </div>
+
+                    <div class="result-item">
+                        <strong>Visual Style</strong>
+                        <div id="resultVisualStyle"></div>
+                    </div>
+
+                    <button class="button secondary" onclick="downloadPDF()" style="margin-top: 20px;">📥 Download Idea Kit PDF</button>
+                    
+                    <div style="margin-top: 30px; border-top: 2px solid #e0e0e0; padding-top: 20px;">
+                        <h3 style="color: #667eea; margin-bottom: 15px;">🚀 Launch on Solana</h3>
+                        <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">Ready to launch? Choose your launchpad:</p>
+                        
+                        <div class="launchpad-buttons">
+                            <button class="launchpad-btn" onclick="launchOnPlatform('pumpfun')" title="Launch on PumpFun">
+                                <span class="launchpad-icon">🎯</span>
+                                <span class="launchpad-name">PumpFun</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('bonkfun')" title="Launch on BonkFun">
+                                <span class="launchpad-icon">🦴</span>
+                                <span class="launchpad-name">BonkFun</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('raydium')" title="Launch on Raydium">
+                                <span class="launchpad-icon">💧</span>
+                                <span class="launchpad-name">Raydium</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('orca')" title="Launch on Orca">
+                                <span class="launchpad-icon">🐋</span>
+                                <span class="launchpad-name">Orca</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('marinade')" title="Launch on Marinade">
+                                <span class="launchpad-icon">⚓</span>
+                                <span class="launchpad-name">Marinade</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('magic-eden')" title="Launch on Magic Eden">
+                                <span class="launchpad-icon">✨</span>
+                                <span class="launchpad-name">Magic Eden</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('tensor')" title="Launch on Tensor">
+                                <span class="launchpad-icon">📊</span>
+                                <span class="launchpad-name">Tensor</span>
+                            </button>
+                            
+                            <button class="launchpad-btn" onclick="launchOnPlatform('solanium')" title="Launch on Solanium">
+                                <span class="launchpad-icon">🌟</span>
+                                <span class="launchpad-name">Solanium</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ideas-list">
+            <h2>📚 Your Previous Ideas</h2>
+            <div id="ideasContainer">
+                <p style="color: #999;">No ideas yet. Submit your first idea above!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let currentUser = null;
+        let currentIdeaId = null;
+        let currentTokenData = null;
+
+        // Initialize
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                verifyToken(token);
+            }
+        });
+
+        async function connectWallet() {
+            try {
+                if (typeof window.ethereum === 'undefined') {
+                    alert('Please install MetaMask to continue');
+                    return;
+                }
+
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const walletAddress = accounts[0];
+
+                const response = await fetch(`${API_URL}/auth/connect-wallet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        walletAddress,
+                        walletType: 'MetaMask'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    localStorage.setItem('authToken', data.token);
+                    currentUser = { walletAddress };
+                    updateWalletUI();
+                    loadUserIdeas();
+                }
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                alert('Failed to connect wallet');
+            }
+        }
+
+        function disconnectWallet() {
+            localStorage.removeItem('authToken');
+            currentUser = null;
+            updateWalletUI();
+            document.getElementById('ideasContainer').innerHTML = '<p style="color: #999;">Connect wallet to view your ideas</p>';
+        }
+
+        function updateWalletUI() {
+            const walletStatus = document.getElementById('walletStatus');
+            const walletInfo = document.getElementById('walletInfo');
+
+            if (currentUser) {
+                walletStatus.style.display = 'none';
+                walletInfo.style.display = 'block';
+                document.getElementById('walletAddress').textContent = currentUser.walletAddress;
+            } else {
+                walletStatus.style.display = 'block';
+                walletInfo.style.display = 'none';
+            }
+        }
+
+        async function verifyToken(token) {
+            try {
+                const response = await fetch(`${API_URL}/auth/verify-token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+                if (data.valid) {
+                    currentUser = { walletAddress: data.walletAddress };
+                    updateWalletUI();
+                    loadUserIdeas();
+                }
+            } catch (error) {
+                console.error('Token verification error:', error);
+            }
+        }
+
+        document.getElementById('ideaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentUser) {
+                alert('Please connect your wallet first');
+                return;
+            }
+
+            const projectIdea = document.getElementById('projectIdea').value;
+            const founderName = document.getElementById('founderName').value;
+            const founderEmail = document.getElementById('founderEmail').value;
+            const industry = document.getElementById('industry').value;
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/ideas/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        projectIdea,
+                        founderName,
+                        founderEmail,
+                        industry
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    currentIdeaId = data.ideaId;
+                    currentTokenData = data.tokenData;
+                    displayResults(data);
+                    document.getElementById('errorMessage').style.display = 'none';
+                    document.getElementById('ideaForm').reset();
+                    loadUserIdeas();
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError('Failed to generate token branding');
+            }
+        });
+
+        function displayResults(data) {
+            document.getElementById('resultTokenName').textContent = data.tokenData.tokenName;
+            document.getElementById('resultSymbol').textContent = `$${data.tokenData.symbol}`;
+            document.getElementById('resultTagline').textContent = data.tokenData.tagline;
+            document.getElementById('resultVisualStyle').textContent = data.tokenData.visualStyle;
+
+            const colorPalette = document.getElementById('colorPalette');
+            colorPalette.innerHTML = '';
+            const colors = data.tokenData.colorPalette?.colors || data.tokenData.colors || [];
+            colors.forEach(color => {
+                const box = document.createElement('div');
+                box.className = 'color-box';
+                box.style.backgroundColor = color;
+                box.title = color;
+                colorPalette.appendChild(box);
+            });
+
+            const uniquenessDiv = document.getElementById('uniquenessStatus');
+            if (data.uniquenessCheck.isUnique) {
+                uniquenessDiv.innerHTML = `<span class="status-badge unique">✓ Unique & Available</span>`;
+            } else {
+                uniquenessDiv.innerHTML = `<span class="status-badge conflict">⚠ Conflict Detected</span><p style="margin-top: 10px; color: #666;">${data.uniquenessCheck.message}</p>`;
+            }
+
+            document.getElementById('results').classList.add('show');
+        }
+
+        async function downloadPDF() {
+            if (!currentIdeaId) {
+                alert('No idea to download');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                window.location.href = `${API_URL}/ideas/${currentIdeaId}/download-pdf?token=${token}`;
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Failed to download PDF');
+            }
+        }
+
+        async function loadUserIdeas() {
+            if (!currentUser) return;
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/ideas`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                if (data.success && data.ideas.length > 0) {
+                    const container = document.getElementById('ideasContainer');
+                    container.innerHTML = '';
+                    data.ideas.forEach(idea => {
+                        const card = document.createElement('div');
+                        card.className = 'idea-card';
+                        card.innerHTML = `
+                            <h4>${idea.tokenName} ($${idea.symbol})</h4>
+                            <p>${idea.projectIdea.substring(0, 100)}...</p>
+                            <p style="font-size: 0.85em; color: #999;">Created: ${new Date(idea.createdAt).toLocaleDateString()}</p>
+                            <div class="idea-actions">
+                                <button class="button secondary" onclick="viewIdea('${idea.id}')">View</button>
+                                <button class="button secondary" onclick="downloadIdeaPDF('${idea.id}')">Download</button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error('Load ideas error:', error);
+            }
+        }
+
+        function viewIdea(ideaId) {
+            alert('Viewing idea: ' + ideaId);
+        }
+
+        function downloadIdeaPDF(ideaId) {
+            const token = localStorage.getItem('authToken');
+            window.location.href = `${API_URL}/ideas/${ideaId}/download-pdf?token=${token}`;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Launchpad URLs and information
+        const launchpads = {
+            pumpfun: {
+                name: 'PumpFun',
+                url: 'https://pump.fun',
+                description: 'The most popular Solana token launchpad',
+                icon: '🎯'
+            },
+            bonkfun: {
+                name: 'BonkFun',
+                url: 'https://bonkfun.com',
+                description: 'Community-driven Solana token launchpad',
+                icon: '🦴'
+            },
+            raydium: {
+                name: 'Raydium',
+                url: 'https://raydium.io',
+                description: 'Automated market maker and liquidity provider',
+                icon: '💧'
+            },
+            orca: {
+                name: 'Orca',
+                url: 'https://www.orca.so',
+                description: 'Fair-price indicator AMM on Solana',
+                icon: '🐋'
+            },
+            marinade: {
+                name: 'Marinade',
+                url: 'https://marinade.finance',
+                description: 'Liquid staking protocol for Solana',
+                icon: '⚓'
+            },
+            'magic-eden': {
+                name: 'Magic Eden',
+                url: 'https://www.magiceden.io',
+                description: 'Leading NFT marketplace on Solana',
+                icon: '✨'
+            },
+            tensor: {
+                name: 'Tensor',
+                url: 'https://www.tensor.trade',
+                description: 'High-performance NFT trading platform',
+                icon: '📊'
+            },
+            solanium: {
+                name: 'Solanium',
+                url: 'https://solanium.io',
+                description: 'Community-governed launchpad for Solana',
+                icon: '🌟'
+            }
+        };
+
+        function launchOnPlatform(platform) {
+            if (!currentTokenData) {
+                alert('Please generate a token idea first');
+                return;
+            }
+
+            const launchpad = launchpads[platform];
+            if (!launchpad) {
+                alert('Unknown launchpad');
+                return;
+            }
+
+            // Create launch data
+            const launchData = {
+                tokenName: currentTokenData.tokenName,
+                symbol: currentTokenData.symbol,
+                theme: currentTokenData.theme,
+                tagline: currentTokenData.tagline,
+                description: currentTokenData.description,
+                colorPalette: currentTokenData.colorPalette,
+                visualStyle: currentTokenData.visualStyle,
+                logoPrompt: currentTokenData.logoPrompt,
+                timestamp: new Date().toISOString()
+            };
+
+            // Store in session storage for reference
+            sessionStorage.setItem('launchData', JSON.stringify(launchData));
+
+            // Show confirmation dialog
+            const message = `
+🚀 Ready to launch on ${launchpad.name}?
+
+Token: ${currentTokenData.tokenName} (${currentTokenData.symbol})
+Theme: ${currentTokenData.theme}
+
+You'll be redirected to ${launchpad.name} where you can:
+✓ Create your token
+✓ Set up liquidity
+✓ Configure tokenomics
+✓ Launch to the community
+
+Your token branding details have been saved and can be used during the launch process.
+
+Click OK to proceed to ${launchpad.name}.
+            `;
+
+            if (confirm(message)) {
+                // Open launchpad in new tab
+                window.open(launchpad.url, '_blank');
+
+                // Show success message
+                showLaunchNotification(launchpad.name, currentTokenData.tokenName);
+            }
+        }
+
+        function showLaunchNotification(launchpadName, tokenName) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 10000;
+                max-width: 400px;
+                animation: slideIn 0.3s ease;
+            `;
+
+            notification.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 8px;">🚀 Launch Initiated</div>
+                <div style="font-size: 0.9em; opacity: 0.95;">
+                    ${tokenName} is ready to launch on ${launchpadName}!
+                    <br><br>
+                    <strong>Next steps:</strong>
+                    <br>1. Connect your Solana wallet
+                    <br>2. Upload your token branding assets
+                    <br>3. Configure token parameters
+                    <br>4. Launch to the community
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(400px);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Remove notification after 8 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 8000);
+        }
+
+        // Add launchpad button classes dynamically
+        window.addEventListener('load', () => {
+            const buttons = document.querySelectorAll('.launchpad-btn');
+            buttons.forEach(btn => {
+                const platform = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                btn.classList.add(platform);
+            });
+        });
+    </script>
+</body>
+</html>
