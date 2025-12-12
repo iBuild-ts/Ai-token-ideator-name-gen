@@ -93,26 +93,23 @@ async function getRedditTrends() {
   return [];
 }
 
-// Generate intelligent token name
+// Generate intelligent token name (improved to match user idea)
 function generateTokenName(projectIdea, theme) {
   const { prefixes, suffixes, adjectives } = cryptoKnowledgeBase.patterns;
   
-  // Extract keywords from project idea
-  const ideaWords = projectIdea.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+  // Extract meaningful keywords from project idea
+  const stopWords = ['a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'for', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'of', 'by', 'with', 'from', 'as', 'that', 'this', 'which', 'who', 'what', 'where', 'when', 'why', 'how'];
+  const ideaWords = projectIdea.toLowerCase()
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !stopWords.includes(w))
+    .slice(0, 5); // Get top 5 meaningful words
   
-  // Smart name generation
+  // Smart name generation with priority on user's idea
   const strategies = [
-    // Strategy 1: Combine prefix + theme
-    () => {
-      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-      const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-      return `${prefix}${suffix}`;
-    },
-    
-    // Strategy 2: Use idea keywords
+    // Strategy 1: Use first meaningful keyword from idea
     () => {
       if (ideaWords.length > 0) {
-        const word = ideaWords[Math.floor(Math.random() * ideaWords.length)];
+        const word = ideaWords[0]; // Use first keyword
         const capitalized = word.charAt(0).toUpperCase() + word.slice(1);
         const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
         return `${capitalized}${suffix}`;
@@ -120,11 +117,33 @@ function generateTokenName(projectIdea, theme) {
       return null;
     },
     
-    // Strategy 3: Adjective + Noun
+    // Strategy 2: Combine theme-relevant prefix with idea keyword
     () => {
-      const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+      if (ideaWords.length > 0) {
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const word = ideaWords[Math.floor(Math.random() * ideaWords.length)];
+        const capitalized = word.charAt(0).toUpperCase() + word.slice(1);
+        return `${prefix}${capitalized}`;
+      }
+      return null;
+    },
+    
+    // Strategy 3: Adjective + idea keyword
+    () => {
+      if (ideaWords.length > 0) {
+        const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const word = ideaWords[Math.floor(Math.random() * ideaWords.length)];
+        const capitalized = word.charAt(0).toUpperCase() + word.slice(1);
+        return `${adj}${capitalized}`;
+      }
+      return null;
+    },
+    
+    // Strategy 4: Fallback - theme-based generation
+    () => {
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
       const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-      return `${adj}${suffix}`;
+      return `${prefix}${suffix}`;
     }
   ];
   
@@ -219,8 +238,13 @@ function generateLogoPrompt(tokenName, theme, colors) {
   return prompts[Math.floor(Math.random() * prompts.length)];
 }
 
-// Generate project description
+// Generate project description (improved to match user idea)
 function generateProjectDescription(projectIdea, theme, tokenName) {
+  // Extract key aspects from the project idea
+  const ideaLength = projectIdea.length;
+  const hasActionWords = /enable|allow|provide|create|build|develop|revolutionize|transform|improve|enhance|optimize|streamline/i.test(projectIdea);
+  
+  // Create more specific descriptions based on idea content
   const descriptions = [
     `${tokenName} is a next-generation ${theme} protocol designed to ${projectIdea}. Built with security and scalability in mind, it represents the future of decentralized finance.`,
     
@@ -230,7 +254,13 @@ function generateProjectDescription(projectIdea, theme, tokenName) {
     
     `Meet ${tokenName}: the ${theme} platform that ${projectIdea}. We're building the infrastructure for the next generation of crypto applications.`,
     
-    `${tokenName} brings innovation to ${theme} by ${projectIdea}. Our vision is to create a more accessible, secure, and efficient ecosystem.`
+    `${tokenName} brings innovation to ${theme} by ${projectIdea}. Our vision is to create a more accessible, secure, and efficient ecosystem.`,
+    
+    `${tokenName} is dedicated to ${projectIdea}. As a ${theme} project, we leverage blockchain technology to deliver solutions that are transparent, secure, and community-driven.`,
+    
+    `Powered by blockchain, ${tokenName} tackles the challenge of ${projectIdea}. Our ${theme} protocol is designed for users who demand both innovation and reliability.`,
+    
+    `${tokenName} represents the next evolution in ${theme}. By focusing on ${projectIdea}, we're creating a platform that empowers users and developers alike.`
   ];
   
   return descriptions[Math.floor(Math.random() * descriptions.length)];
@@ -244,14 +274,49 @@ export async function generateTokenBranding(projectIdea) {
       throw new Error('Project idea cannot be empty');
     }
 
-    // Select theme based on project idea
+    // Select theme based on project idea (improved matching)
     const ideaLower = projectIdea.toLowerCase();
     let selectedTheme = 'DeFi'; // default
+    let maxMatches = 0;
     
-    for (const theme of cryptoKnowledgeBase.themes) {
-      if (ideaLower.includes(theme.toLowerCase())) {
+    // Enhanced theme detection with keyword matching
+    const themeKeywords = {
+      'DeFi': ['lending', 'borrow', 'yield', 'swap', 'liquidity', 'protocol', 'finance', 'trading', 'pool', 'farm'],
+      'NFT': ['nft', 'digital', 'art', 'collectible', 'token', 'ownership', 'marketplace', 'mint'],
+      'Gaming': ['game', 'play', 'reward', 'player', 'quest', 'battle', 'metaverse', 'virtual'],
+      'Metaverse': ['metaverse', 'virtual', 'world', 'avatar', 'immersive', 'vr', 'ar'],
+      'AI': ['ai', 'artificial', 'intelligence', 'machine', 'learning', 'neural', 'model', 'autonomous'],
+      'Layer2': ['layer2', 'scaling', 'rollup', 'sidechain', 'fast', 'cheap'],
+      'Privacy': ['privacy', 'anonymous', 'confidential', 'secret', 'encrypted', 'hidden'],
+      'Staking': ['staking', 'stake', 'validator', 'earn', 'reward', 'delegate'],
+      'Governance': ['governance', 'vote', 'dao', 'proposal', 'community', 'decision'],
+      'Bridge': ['bridge', 'cross-chain', 'interop', 'connect', 'transfer'],
+      'Oracle': ['oracle', 'data', 'feed', 'price', 'information'],
+      'DEX': ['dex', 'exchange', 'decentralized', 'swap', 'trade'],
+      'Lending': ['lending', 'loan', 'credit', 'borrow', 'collateral'],
+      'Derivatives': ['derivative', 'futures', 'options', 'leverage', 'short'],
+      'Synthetic': ['synthetic', 'synth', 'asset', 'mirror'],
+      'Meme': ['meme', 'fun', 'joke', 'community', 'viral'],
+      'Social': ['social', 'community', 'creator', 'content', 'network'],
+      'Yield': ['yield', 'apy', 'return', 'farming', 'interest']
+    };
+    
+    // Count keyword matches for each theme
+    for (const [theme, keywords] of Object.entries(themeKeywords)) {
+      const matches = keywords.filter(kw => ideaLower.includes(kw)).length;
+      if (matches > maxMatches) {
+        maxMatches = matches;
         selectedTheme = theme;
-        break;
+      }
+    }
+    
+    // If no matches found, try direct theme name matching
+    if (maxMatches === 0) {
+      for (const theme of cryptoKnowledgeBase.themes) {
+        if (ideaLower.includes(theme.toLowerCase())) {
+          selectedTheme = theme;
+          break;
+        }
       }
     }
 
